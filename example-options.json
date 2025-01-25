@@ -1,0 +1,6 @@
+{
+    "ORG_FILE": "path/to/reading-list.org",
+    "MARGINALIA_DIRECTORY": "/path/to/folder/for/marginalia/",
+    "REMARKABLE_FOLDER_NAME": "<name of a top-level directory on reMarkable>",
+    "REMARKABLE_ADDRESS": "http://10.11.99.1"
+}
