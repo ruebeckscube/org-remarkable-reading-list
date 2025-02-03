@@ -17,8 +17,6 @@ with open("options.json", 'r') as f:
 
 LAST_SYNC_FILE = 'last-sync-datetime.txt'
 
-print(ORG_FILE, MARGINALIA_DIRECTORY, REMARKABLE_FOLDER_NAME, REMARKABLE_ADDRESS, LAST_SYNC_FILE)
-
 # reMarkable USB web interface API documented (not entirely accurately) here:
 # https://remarkable.guide/tech/usb-web-interface.html
 
