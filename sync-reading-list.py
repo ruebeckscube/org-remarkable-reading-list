@@ -20,14 +20,14 @@ LAST_SYNC_FILE = 'last-sync-datetime.txt'
 # reMarkable USB web interface API documented (not entirely accurately) here:
 # https://remarkable.guide/tech/usb-web-interface.html
 
-def needs_sync(node, todo_state, last_sync_datetime):
-    if node.todo != todo_state:
+def needs_sync(node, todo_states, last_sync_datetime):
+    if node.todo not in todo_states:
         return False
     if not node.repeated_tasks:
         return False
     reading_datetime = max(state.start
                            for state in node.repeated_tasks
-                           if state.after == todo_state)
+                           if state.after in todo_states)
     return reading_datetime > last_sync_datetime
 
 
@@ -178,9 +178,9 @@ def main():
         return
 
     for node in org_root[1:]:
-        if needs_sync(node, 'READING', last_sync_datetime):
+        if needs_sync(node, ['READING'], last_sync_datetime):
             upload_to_remarkable(node)
-        if needs_sync(node, 'READ', last_sync_datetime):
+        if needs_sync(node, ['READ', 'ABANDONED'], last_sync_datetime):
             if get_yes_no_input(f"Do you want to download marginalia for {node.heading}?"):
                 marginalia_filename = download_marginalia(node, reading_folder_guid)
                 if marginalia_filename:
