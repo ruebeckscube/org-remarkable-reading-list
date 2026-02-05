@@ -173,20 +173,26 @@ def main():
     try:
         reading_folder_guid = get_remarkable_folder_id()
     except Exception as e:
-        print("Failed to connect to reMarkable. Try restarting it. Error:\n")
+        print("Failed to connect to reMarkable. Try restarting it (ssh remarkable 'systemctl restart xochitl'). Error:\n")
         print(e)
         return
 
     for node in org_root[1:]:
-        if needs_sync(node, ['READING'], last_sync_datetime):
-            upload_to_remarkable(node)
-        if needs_sync(node, ['READ', 'ABANDONED'], last_sync_datetime):
-            if get_yes_no_input(f"Do you want to download marginalia for {node.heading}?"):
-                marginalia_filename = download_marginalia(node, reading_folder_guid)
-                if marginalia_filename:
-                    add_marginalia_link(node, marginalia_filename)
-            print(f"Don't forget to delete {node.heading} manually (and bother reMarkable about adding deletion to the web interface).")
-            print()
+        try:
+            if needs_sync(node, ['READING'], last_sync_datetime):
+                upload_to_remarkable(node)
+            if needs_sync(node, ['READ', 'ABANDONED'], last_sync_datetime):
+                if get_yes_no_input(f"Do you want to download marginalia for {node.heading}?"):
+                    marginalia_filename = download_marginalia(node, reading_folder_guid)
+                    if marginalia_filename:
+                        add_marginalia_link(node, marginalia_filename)
+                print(f"Don't forget to delete {node.heading} manually (and bother reMarkable about adding deletion to the web interface).")
+                print()
+        except Exception as e:
+            print("Failed to process a node:\n")
+            print(node)
+            print("\nError:\n")
+            print(e)
 
     with open(LAST_SYNC_FILE, 'w') as f:
         f.write(datetime.datetime.now().isoformat())
