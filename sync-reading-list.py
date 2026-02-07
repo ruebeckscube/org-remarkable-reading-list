@@ -53,6 +53,10 @@ def get_book_filename(node):
         print(f"{node.heading} does not have a linked file.")
         return
 
+    marginalia_link = node.get_property('MARGINALIA')
+    if marginalia_link and  get_yes_no_input(f'{node.heading} has marginalia saved. Do you want to upload that instead of the original file?'):
+        file_link = marginalia_link
+
     m = re.match(r"\[\[file:(.+)\]\[Link to file\]\]", file_link)
     if m is None:
         print(f"{node.heading} has an incorrectly formatted file link")
@@ -156,9 +160,11 @@ def add_marginalia_link(node, marginalia_filename):
 
     print("Adding marginalia link to reading list.")
     for line in fileinput.FileInput(ORG_FILE, inplace=True):
-        if book_filename in line:
-            line += f":MARGINALIA: [[file:{marginalia_filename}][Link to marginalia]]" + os.linesep
-            print(line, end="")
+        if book_filename in line and ':FILE:' in line:
+            line += f":MARGINALIA: [[file:{marginalia_filename}][Link to file]]" + os.linesep
+            print(line, end="") # Trusting there's only one :FILE: link per node
+        elif marginalia_filename in line and ':MARGINALIA:' in line:
+            print('', end="") # Deletes old marginalia link
         else:
             print(line, end="")
 
