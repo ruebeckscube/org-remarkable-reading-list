@@ -188,7 +188,7 @@ def main():
             if needs_sync(node, ['READING'], last_sync_datetime):
                 upload_to_remarkable(node)
             if needs_sync(node, ['READ', 'ABANDONED'], last_sync_datetime):
-                if get_yes_no_input(f"Do you want to download marginalia for {node.heading}?"):
+                if get_yes_no_input(f"\nDo you want to download marginalia for {node.heading}?"):
                     marginalia_filename = download_marginalia(node, reading_folder_guid)
                     if marginalia_filename:
                         add_marginalia_link(node, marginalia_filename)
