@@ -37,7 +37,7 @@ def get_remarkable_folder_id():
 
     r = requests.get(f"{REMARKABLE_ADDRESS}/documents/")
     for folder_metadata in r.json():
-        if folder_metadata['VissibleName'] == REMARKABLE_FOLDER_NAME:
+        if folder_metadata['VisibleName'] == REMARKABLE_FOLDER_NAME:
             # Requesting the folder's contents is how the reMarkable
             # web interface knows which folder to upload things to later
             guid = folder_metadata['ID']
@@ -104,10 +104,10 @@ def get_yes_no_input(prompt):
 def get_remarkable_guid(book_filename, reading_folder_guid):
     # This seems to be how reMarkable names things
     if book_filename[-4:] == '.pdf':
-        vissiblename = os.path.basename(book_filename)
+        visiblename = os.path.basename(book_filename)
     elif book_filename[-5:] == '.epub':
         book = epub.read_epub(book_filename)
-        vissiblename = book.title
+        visiblename = book.title
     else:
         print("Unsupported file format; must be .epub or .pdf")
         return
@@ -119,11 +119,11 @@ def get_remarkable_guid(book_filename, reading_folder_guid):
     # match and confirm with user.
     best_match = (None, None, 0)
     for item_metadata in r.json():
-        if item_metadata['VissibleName'] == vissiblename:
+        if item_metadata['VisibleName'] == visiblename:
             return item_metadata['ID']
-        match_score = fuzz.ratio(vissiblename, item_metadata['VissibleName'])
+        match_score = fuzz.ratio(visiblename, item_metadata['VisibleName'])
         if match_score > best_match[2]:
-            best_match = (item_metadata['ID'], item_metadata['VissibleName'], match_score)
+            best_match = (item_metadata['ID'], item_metadata['VisibleName'], match_score)
 
     if get_yes_no_input(f"No exact match found, is {best_match[1]} right?"):
         return best_match[0]
